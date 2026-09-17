@@ -25,4 +25,7 @@ urlpatterns = [
 
     # Send application URLs to the restaurant app.
     path("", include("restaurant.urls")),
+
+    # login and logout
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
