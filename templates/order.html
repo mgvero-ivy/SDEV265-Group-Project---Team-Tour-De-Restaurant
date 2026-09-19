@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+</head>
+<body>
+
+    <h1>Test Ordering Page</h1>
+
+    {% for item in menu_items %}
+
+        <p>
+            {{ item.name }}
+
+            {% if item.price %}
+                - ${{ item.price }}
+            {% endif %}
+        </p>
+
+        <form method="post" action="{% url 'place_order' item.id %}">
+            {% csrf_token %}
+
+            <label>
+                Quantity:
+                <input type="number" name="quantity" value="1" min="1">
+            </label>
+
+            <button type="submit">
+                Order {{ item.name }}
+            </button>
+        </form>
+
+    {% empty %}
+        <p>No menu items are currently available.</p>
+    {% endfor %}
+
+</body>
+</html>

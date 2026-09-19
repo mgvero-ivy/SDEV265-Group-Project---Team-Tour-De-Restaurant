@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory</title>
+</head>
+<body>
+
+    <h1>Current Inventory</h1>
+
+    {% for ingredient in ingredients %}
+        <p>
+            {{ ingredient.name }}:
+            {{ ingredient.quantity }} {{ ingredient.unit }}
+
+            {% if ingredient.quantity <= ingredient.low_alert %}
+                - LOW STOCK
+            {% endif %}
+        </p>
+    {% empty %}
+        <p>No ingredients are currently in inventory.</p>
+    {% endfor %}
+
+</body>
+</html>
