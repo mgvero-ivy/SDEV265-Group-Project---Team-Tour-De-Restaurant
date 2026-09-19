@@ -1,9 +1,13 @@
 from django.urls import path
-
 from . import views
 
-
 urlpatterns = [
-    # Main page of the application.
     path("", views.index, name="index"),
+    path("inventory/", views.inventory, name="inventory"),
+    path("order/", views.order_page, name="order_page"),
+    path(
+        "order/<int:menu_item_id>/",
+        views.place_order,
+        name="place_order"
+    ),
 ]
