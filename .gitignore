@@ -9,6 +9,8 @@ __pycache__/
 # Environment variables / secrets
 .env
 
+# VS Code settings
+.vscode/
 
 # Operating system files
 .DS_Store
