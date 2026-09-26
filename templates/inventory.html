@@ -16,6 +16,12 @@
             {% if ingredient.quantity <= ingredient.low_alert %}
                 - LOW STOCK
             {% endif %}
+
+            <form method="POST" action="{% url 'add_ingredient_qty' ingredient.id %}">
+                {% csrf_token %}
+                <input type="number" name="quantity" placeholder="Add quantity">
+                <button type="submit">Add to Inventory</button>
+            </form>
         </p>
     {% empty %}
         <p>No ingredients are currently in inventory.</p>

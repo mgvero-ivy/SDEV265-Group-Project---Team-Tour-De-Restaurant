@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Ingredient, MenuItem, MenuItemIngredient, Order, OrderItem
+from decimal import Decimal
 
 
 def index(request):
@@ -76,3 +77,15 @@ def place_order(request, menu_item_id):
     )
 
     return redirect("order_page")
+
+def add_ingredient_qty(request, ingredient_id):
+    """To place an order for an ingredient"""
+    if request.method == "POST":
+        ingredient = Ingredient.objects.get(id=ingredient_id)
+        qty_input = request.POST.get("quantity")
+        if qty_input:
+            amount_added = Decimal(qty_input)
+            ingredient.quantity = ingredient.quantity + amount_added
+            ingredient.save()
+
+    return redirect("inventory")
