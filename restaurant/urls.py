@@ -20,4 +20,11 @@ urlpatterns = [
         views.place_order,
         name="place_order"
     ),
+    path("kitchen/", views.kitchen, name="kitchen"),
+    path(
+        "kitchen/complete/<int:order_id>/",
+        views.complete_order,
+        name="complete_order"
+    ),
+
 ]

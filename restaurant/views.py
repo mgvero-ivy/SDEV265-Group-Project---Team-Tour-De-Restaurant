@@ -129,6 +129,34 @@ def place_order(request):
 
 @login_required
 @user_passes_test(staff_user)
+def kitchen(request):
+    """
+    Displays all currently open orders for kitchen staff.
+    """
+    open_orders = Order.objects.filter(completed=False).order_by("created_at")
+
+    return render(
+        request,
+        "kitchen.html",
+        {"open_orders": open_orders}
+    )
+
+@login_required
+@user_passes_test(staff_user)
+def complete_order(request, order_id):
+    """
+    Marks an open order as completed.
+    """
+
+    if request.method == "POST":
+        order = Order.objects.get(id=order_id)
+        order.completed = True
+        order.save()
+
+    return redirect("kitchen")
+
+@login_required
+@user_passes_test(staff_user)
 def add_ingredient_qty(request, ingredient_id):
     """To place an order for an ingredient"""
     if request.method == "POST":
