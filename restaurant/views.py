@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Ingredient, MenuItem, MenuItemIngredient, Order, OrderItem
 from decimal import Decimal
 
@@ -36,45 +37,88 @@ def order_page(request):
         {"menu_items": menu_items}
     )
 
-def place_order(request, menu_item_id):
+def place_order(request):
     """
-    Creates an order for a selected menu item.
-
-    This basic version only handles POST requests and records
-    the menu item and requested quantity.
+    Creates one order containing all menu items
+    that the customer selected.
     """
 
     if request.method != "POST":
         return redirect("order_page")
 
-    menu_item = MenuItem.objects.get(id=menu_item_id)
+    menu_items = MenuItem.objects.filter(available=True)
 
-    requirements = MenuItemIngredient.objects.filter(menu_item=menu_item)
+    selected_items = []
 
-    quantity = int(request.POST.get("quantity", 1))
+    # Find which menu items the customer selected.
+    for menu_item in menu_items:
+        quantity = int(
+            request.POST.get(f"quantity_{menu_item.id}", 0)
+        )
 
-    # Check that enough of every required ingredient is available.
-    for requirement in requirements:
-        amount_needed = requirement.quantity_required * quantity
+        if quantity > 0:
+            selected_items.append((menu_item, quantity))
 
-        if requirement.ingredient.quantity < amount_needed:
+    # If nothing was selected, return to the ordering page.
+    if not selected_items:
+        return redirect("order_page")
+
+    ingredient_totals = {}
+
+    # Calculate the total amount of each ingredient needed
+    # for the entire order.
+    for menu_item, quantity in selected_items:
+
+        requirements = MenuItemIngredient.objects.filter(
+            menu_item=menu_item
+        )
+
+        for requirement in requirements:
+            ingredient = requirement.ingredient
+
+            amount_needed = (
+                requirement.quantity_required * quantity
+            )
+
+            if ingredient.id not in ingredient_totals:
+                ingredient_totals[ingredient.id] = {
+                    "ingredient": ingredient,
+                    "amount_needed": 0
+                }
+
+            ingredient_totals[ingredient.id]["amount_needed"] += amount_needed
+
+    # Check inventory before creating the order.
+    for item in ingredient_totals.values():
+
+        ingredient = item["ingredient"]
+        amount_needed = item["amount_needed"]
+
+        if ingredient.quantity < amount_needed:
             return redirect("order_page")
 
+    # Create one order for everything selected.
     order = Order.objects.create()
 
-    # Reduce the inventory for each ingredient used by the order.
-    for requirement in requirements:
-        ingredient = requirement.ingredient
-        amount_needed = requirement.quantity_required * quantity
+    # Create an OrderItem for each selected menu item.
+    for menu_item, quantity in selected_items:
+
+        OrderItem.objects.create(
+            order=order,
+            menu_item=menu_item,
+            quantity=quantity
+        )
+
+    # Reduce inventory after the complete order has been checked.
+    for item in ingredient_totals.values():
+
+        ingredient = item["ingredient"]
+        amount_needed = item["amount_needed"]
 
         ingredient.quantity -= amount_needed
-        ingredient.save()    
+        ingredient.save()
 
-    OrderItem.objects.create(
-        order=order,
-        menu_item=menu_item,
-        quantity=quantity
-    )
+    messages.success(request, "Order placed successfully.")
 
     return redirect("order_page")
 
