@@ -19,7 +19,12 @@
 
     {% for item in menu_items %}
 
+        {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" style="max-width: 200px;">
+        {% endif %}
+
         <p>
+
             {{ item.name }}
 
             {% if item.price %}
