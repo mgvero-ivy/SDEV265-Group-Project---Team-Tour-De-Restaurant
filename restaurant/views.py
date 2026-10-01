@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import Ingredient, MenuItem, MenuItemIngredient, Order, OrderItem
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+def staff_user(user):
+    return user.is_staff
 
 def index(request):
     """
@@ -12,6 +15,8 @@ def index(request):
     """
     return render(request, "index.html")
 
+@login_required
+@user_passes_test(staff_user)
 def inventory(request):
     """
     Displays the current ingredient inventory.
@@ -78,6 +83,8 @@ def place_order(request, menu_item_id):
 
     return redirect("order_page")
 
+@login_required
+@user_passes_test(staff_user)
 def add_ingredient_qty(request, ingredient_id):
     """To place an order for an ingredient"""
     if request.method == "POST":
@@ -87,5 +94,25 @@ def add_ingredient_qty(request, ingredient_id):
             amount_added = Decimal(qty_input)
             ingredient.quantity = ingredient.quantity + amount_added
             ingredient.save()
+
+    return redirect("inventory")
+
+@login_required
+@user_passes_test(staff_user)
+def add_new_ingredient(request):
+    """To add/create new ingredient"""
+    if request.method == "POST":
+        name = request.POST.get("name")
+        quantity = request.POST.get("quantity")
+        unit = request.POST.get("unit")
+        low_alert = request.POST.get("low_alert")
+
+        if name and quantity and unit and low_alert:
+            Ingredient.objects.create(
+                name=name,
+                quantity=Decimal(quantity),
+                unit=unit,
+                low_alert=Decimal(low_alert)
+            )
 
     return redirect("inventory")
