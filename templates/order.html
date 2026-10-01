@@ -3,54 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <title>Order</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-<h1>Ordering Page</h1>
+    <h1>Ordering Page</h1>
 
-{% if messages %}
-    {% for message in messages %}
-        <p>{{ message }}</p>
-    {% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
-<form method="post" action="{% url 'place_order' %}">
-    {% csrf_token %}
+    <form method="post" action="{% url 'place_order' %}">
+        {% csrf_token %}
 
-    {% for item in menu_items %}
+        {% for item in menu_items %}
 
-        {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" style="max-width: 200px;">
-        {% endif %}
+            <div class="menu-item">
 
-        <p>
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% endif %}
 
-            {{ item.name }}
+                <h2>{{ item.name }}</h2>
 
-            {% if item.price %}
-                - ${{ item.price }}
-            {% endif %}
+                {% if item.description %}
+                    <p>{{ item.description }}</p>
+                {% endif %}
 
-            <label>
-                Quantity:
-                <input
-                    type="number"
-                    name="quantity_{{ item.id }}"
-                    value="0"
-                    min="0"
-                >
-            </label>
-        </p>
+                {% if item.price %}
+                    <p><strong>${{ item.price }}</strong></p>
+                {% endif %}
 
-    {% empty %}
+                <label>
+                    Quantity:
+                    <input
+                        type="number"
+                        name="quantity_{{ item.id }}"
+                        value="0"
+                        min="0"
+                        data-price="{{ item.price|default:0 }}"
+                    >
+                </label>
 
-        <p>No menu items are currently available.</p>
+            </div>
 
-    {% endfor %}
+        {% empty %}
 
-    <button type="submit">Place Order</button>
+            <p>No menu items are currently available.</p>
 
-</form>
+        {% endfor %}
+
+        <div class="order-summary">
+            <strong>Total: $<span id="order-total">0.00</span></strong>
+        </div>
+        
+        <button type="submit">Place Order</button>
+
+    </form>
+
+    <script>
+        const quantityInputs = document.querySelectorAll('input[type="number"]');
+        const totalDisplay = document.getElementById("order-total");
+
+        function updateTotal() {
+            let total = 0;
+
+            quantityInputs.forEach(input => {
+                const quantity = parseInt(input.value) || 0;
+                const price = parseFloat(input.dataset.price) || 0;
+
+                total += quantity * price;
+            });
+
+            totalDisplay.textContent = total.toFixed(2);
+        }
+
+        quantityInputs.forEach(input => {
+            input.addEventListener("input", updateTotal);
+        });
+    </script>
 
 </body>
 </html>

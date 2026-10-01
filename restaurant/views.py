@@ -54,6 +54,8 @@ def place_order(request):
     menu_items = MenuItem.objects.filter(available=True)
 
     selected_items = []
+    order_total = Decimal("0.00")
+    order_summary = []
 
     # Find which menu items the customer selected.
     for menu_item in menu_items:
@@ -105,7 +107,8 @@ def place_order(request):
     # Create one order for everything selected.
     order = Order.objects.create()
 
-    # Create an OrderItem for each selected menu item.
+    # Create an OrderItem for each selected menu item and calculates total
+    # Also calculate the order total and build a summary.
     for menu_item, quantity in selected_items:
 
         OrderItem.objects.create(
@@ -114,6 +117,15 @@ def place_order(request):
             quantity=quantity
         )
 
+        # Add the item's price to the total.
+        if menu_item.price is not None:
+            order_total += menu_item.price * quantity
+
+        # Add the item and quantity to the confirmation summary.
+        order_summary.append(
+            f"{quantity} x {menu_item.name}"
+        )
+        
     # Reduce inventory after the complete order has been checked.
     for item in ingredient_totals.values():
 
@@ -123,7 +135,14 @@ def place_order(request):
         ingredient.quantity -= amount_needed
         ingredient.save()
 
-    messages.success(request, "Order placed successfully.")
+    summary_text = ", ".join(order_summary)
+
+    messages.success(
+        request,
+        f"Order placed successfully. "
+        f"Items: {summary_text}. "
+        f"Total: ${order_total:.2f}"
+    )
 
     return redirect("order_page")
 
