@@ -52,7 +52,6 @@ class MenuItem(models.Model):
     name = models.CharField(max_length=100)
 
     # Optional description
-     # Not in currently in use by the program but may be used in the future
     description = models.TextField(blank=True)
 
     # Determines whether customers/employees can currently order this item
@@ -65,6 +64,13 @@ class MenuItem(models.Model):
         decimal_places=2,
         null=True,
         blank=True
+    )
+
+    # Allows uploading an image for the menu item.
+    image = models.ImageField(
+        upload_to="menu_items/",
+        blank=True,
+        null=True
     )
 
     def __str__(self):

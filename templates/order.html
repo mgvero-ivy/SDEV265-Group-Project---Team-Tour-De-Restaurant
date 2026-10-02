@@ -3,37 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <title>Order</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <h1>Test Ordering Page</h1>
+    <h1>Ordering Page</h1>
 
-    {% for item in menu_items %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
-        <p>
-            {{ item.name }}
+    <form method="post" action="{% url 'place_order' %}">
+        {% csrf_token %}
 
-            {% if item.price %}
-                - ${{ item.price }}
-            {% endif %}
-        </p>
+        {% for item in menu_items %}
 
-        <form method="post" action="{% url 'place_order' item.id %}">
-            {% csrf_token %}
+            <div class="menu-item">
 
-            <label>
-                Quantity:
-                <input type="number" name="quantity" value="1" min="1">
-            </label>
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% endif %}
 
-            <button type="submit">
-                Order {{ item.name }}
-            </button>
-        </form>
+                <h2>{{ item.name }}</h2>
 
-    {% empty %}
-        <p>No menu items are currently available.</p>
-    {% endfor %}
+                {% if item.description %}
+                    <p>{{ item.description }}</p>
+                {% endif %}
+
+                {% if item.price %}
+                    <p><strong>${{ item.price }}</strong></p>
+                {% endif %}
+
+                <label>
+                    Quantity:
+                    <input
+                        type="number"
+                        name="quantity_{{ item.id }}"
+                        value="0"
+                        min="0"
+                        data-price="{{ item.price|default:0 }}"
+                    >
+                </label>
+
+            </div>
+
+        {% empty %}
+
+            <p>No menu items are currently available.</p>
+
+        {% endfor %}
+
+        <div class="order-summary">
+            <strong>Total: $<span id="order-total">0.00</span></strong>
+        </div>
+        
+        <button type="submit">Place Order</button>
+
+    </form>
+
+    <script>
+        const quantityInputs = document.querySelectorAll('input[type="number"]');
+        const totalDisplay = document.getElementById("order-total");
+
+        function updateTotal() {
+            let total = 0;
+
+            quantityInputs.forEach(input => {
+                const quantity = parseInt(input.value) || 0;
+                const price = parseFloat(input.dataset.price) || 0;
+
+                total += quantity * price;
+            });
+
+            totalDisplay.textContent = total.toFixed(2);
+        }
+
+        quantityInputs.forEach(input => {
+            input.addEventListener("input", updateTotal);
+        });
+    </script>
 
 </body>
 </html>

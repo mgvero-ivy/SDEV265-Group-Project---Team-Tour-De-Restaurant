@@ -16,10 +16,26 @@
             {% if ingredient.quantity <= ingredient.low_alert %}
                 - LOW STOCK
             {% endif %}
+
+            <form method="POST" action="{% url 'add_ingredient_qty' ingredient.id %}">
+                {% csrf_token %}
+                <input type="number" name="quantity" placeholder="Add quantity" step="any" required>
+                <button type="submit">Add to Inventory</button>
+            </form>
         </p>
     {% empty %}
         <p>No ingredients are currently in inventory.</p>
     {% endfor %}
+
+    <h3>Add New Ingredient</h3>
+    <form method="POST" action="{% url 'add_new_ingredient' %}">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Ingredient Name" required>
+        <input type="number" name="quantity" placeholder="Quantity" step="any" required>
+        <input type="text" name="unit" placeholder="Unit" required>
+        <input type="number" name="low_alert" placeholder="Low Alert" step="any" min="0" required>
+        <button type="submit">Add Ingredient</button>
+    </form>
 
 </body>
 </html>
