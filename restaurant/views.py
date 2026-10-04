@@ -42,6 +42,7 @@ def order_page(request):
         {"menu_items": menu_items}
     )
 
+@login_required
 def place_order(request):
     """
     Creates one order containing all menu items
