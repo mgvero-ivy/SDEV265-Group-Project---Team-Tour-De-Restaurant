@@ -33,8 +33,35 @@ def inventory(request):
 def order_page(request):
     """
     Displays menu items that are currently available to order.
+    Calculates the maximum quantity of each menu item that can
+    be made from the current ingredient inventory.
     """
     menu_items = MenuItem.objects.filter(available=True)
+
+    for menu_item in menu_items:
+        requirements = MenuItemIngredient.objects.filter(
+            menu_item=menu_item
+        )
+
+        max_quantities = []
+
+        for requirement in requirements:
+            ingredient = requirement.ingredient
+
+            # Calculate how many of this menu item can be made
+            # using this particular ingredient.
+            possible_quantity = int(
+                ingredient.quantity // requirement.quantity_required
+            )
+
+            max_quantities.append(possible_quantity)
+
+        # The ingredient with the lowest available quantity
+        # determines how many of the menu item can be made.
+        if max_quantities:
+            menu_item.max_order_quantity = min(max_quantities)
+        else:
+            menu_item.max_order_quantity = 0
 
     return render(
         request,
@@ -103,6 +130,11 @@ def place_order(request):
         amount_needed = item["amount_needed"]
 
         if ingredient.quantity < amount_needed:
+            messages.error(
+                request,
+                f"Sorry, there is not enough {ingredient.name} "
+                f"available to complete your order."
+            )
             return redirect("order_page")
 
     # Create one order for everything selected.
@@ -140,9 +172,9 @@ def place_order(request):
 
     messages.success(
         request,
-        f"Order placed successfully. "
-        f"Items: {summary_text}. "
-        f"Total: ${order_total:.2f}"
+        "Order placed successfully.\n"
+        + "\n".join(order_summary)
+        + f"\nTotal: ${order_total:.2f}"
     )
 
     return redirect("order_page")

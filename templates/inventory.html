@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Inventory</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
@@ -12,6 +15,7 @@
         {% if user.is_authenticated and user.is_staff %}
             <a href="/inventory/">Inventory</a>
             <a href="/kitchen/">Kitchen</a>
+            <a href="/admin/">Admin</a>
         {% endif %}
         {% if not user.is_authenticated %}
             <a href="{% url 'login' %}">Staff Login</a>
@@ -25,8 +29,10 @@
             {{ ingredient.name }}:
             {{ ingredient.quantity }} {{ ingredient.unit }}
 
-            {% if ingredient.quantity <= ingredient.low_alert %}
-                - LOW STOCK
+            {% if ingredient.quantity <= 0 %}
+                <span class="stock-warning">OUT OF STOCK</span>
+            {% elif ingredient.quantity <= ingredient.low_alert %}
+                <span class="stock-warning">LOW STOCK</span>
             {% endif %}
 
             <form method="POST" action="{% url 'add_ingredient_qty' ingredient.id %}">
@@ -48,6 +54,13 @@
         <input type="number" name="low_alert" placeholder="Low Alert" step="any" min="0" required>
         <button type="submit">Add Ingredient</button>
     </form>
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% endif %}
 
 </body>
 </html>
