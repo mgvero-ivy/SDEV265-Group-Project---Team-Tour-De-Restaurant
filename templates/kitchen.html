@@ -7,34 +7,54 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+<body>
 
-<h1>Kitchen Orders</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/order/">Order</a>
+        {% if user.is_authenticated and user.is_staff %}
+            <a href="/inventory/">Inventory</a>
+            <a href="/kitchen/">Kitchen</a>
+            <a href="/admin/">Admin</a>
+        {% endif %}
+        {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}">Staff Login</a>
+        {% endif %}
+    </nav>
 
-{% for order in open_orders %}
+    <h1>Kitchen Orders</h1>
 
-    <h2>Order {{ order.id }}</h2>
+    {% for order in open_orders %}
 
-    <p>Created: {{ order.created_at }}</p>
+        <h2>Order {{ order.id }}</h2>
 
-    <ul>
-        {% for item in order.orderitem_set.all %}
-            <li>
-                {{ item.menu_item.name }}
-                - Quantity: {{ item.quantity }}
-            </li>
-        {% endfor %}
-    </ul>
+        <p>Created: {{ order.created_at }}</p>
 
-    <form method="post" action="{% url 'complete_order' order.id %}">
-        {% csrf_token %}
-        <button type="submit">Mark Fulfilled</button>
-    </form>
+        <ul>
+            {% for item in order.orderitem_set.all %}
+                <li>
+                    {{ item.menu_item.name }}
+                    - Quantity: {{ item.quantity }}
+                </li>
+            {% endfor %}
+        </ul>
 
-{% empty %}
+        <form method="post" action="{% url 'complete_order' order.id %}">
+            {% csrf_token %}
+            <button type="submit">Mark Fulfilled</button>
+        </form>
 
-    <p>No open orders.</p>
+    {% empty %}
 
-{% endfor %}
+        <p>No open orders.</p>
 
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% endif %}
 </body>
 </html>

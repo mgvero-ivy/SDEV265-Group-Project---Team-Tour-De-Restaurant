@@ -65,3 +65,22 @@ button {
 button:hover {
     background-color: #3f321f;
 }
+
+.order-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.7;
+    text-align: center;
+    padding: 20px 30px;
+    background-color: white;
+    border: 2px solid #b9a95f;
+    border-radius: 10px;
+    min-width: 400px;
+}
+
+.stock-warning {
+    color: red;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
