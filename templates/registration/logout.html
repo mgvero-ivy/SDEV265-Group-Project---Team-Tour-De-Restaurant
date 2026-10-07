@@ -39,3 +39,13 @@
     {% endif %}
 
 {% endblock %}
+
+
+{% block content %}
+
+    <h1>Logged Out</h1>
+    <p>You have been logged out. To place an order or perform staff essentials, please log back in.</p>
+
+    <p><a href="{% url 'login' %}">Log In</a></p>
+
+{% endblock %}

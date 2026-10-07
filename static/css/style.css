@@ -1,0 +1,86 @@
+body {
+    background-color: palegoldenrod;
+    color: #2f2a1f;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 30px;
+}
+
+form {
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto 40px auto;
+}
+
+.menu-item {
+    background-color: #fffdf2;
+    border: 1px solid #8a6d3b;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.menu-item img {
+    width: 180px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.menu-item h2 {
+    margin-top: 0;
+}
+
+.menu-item input {
+    width: 70px;
+}
+
+.order-summary {
+    background-color: #fffdf2;
+    border: 1px solid #8a6d3b;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 20px 0;
+    font-size: 1.2rem;
+}
+
+button {
+    background-color: #5b4a2f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #3f321f;
+}
+
+.order-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.7;
+    text-align: center;
+    padding: 20px 30px;
+    background-color: white;
+    border: 2px solid #b9a95f;
+    border-radius: 10px;
+    min-width: 400px;
+}
+
+.stock-warning {
+    color: red;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
