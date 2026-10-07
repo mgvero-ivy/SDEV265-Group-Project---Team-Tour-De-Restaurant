@@ -17,27 +17,73 @@
     <nav>
         <a href="/">Home</a>
         <a href="/order/">Order</a>
+
         {% if user.is_authenticated and user.is_staff %}
             <a href="/inventory/">Inventory</a>
             <a href="/kitchen/">Kitchen</a>
             <a href="/admin/">Admin</a>
-        {% endif %}
-        {% if not user.is_authenticated %}
+
+            <form class="nav-logout" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
             <a href="{% url 'login' %}">Staff Login</a>
         {% endif %}
     </nav>
 
-    <h1>Tour De Restaurant</h1>
+    <div class="homepage-text">
+        <h1>Tour De Restaurant</h1>
 
-    <p>Restaurant inventory and ordering system.</p>
+        <H2>SDEV265 Group Project</H2>
+
+        <H3>Developed by Marko Gvero, Ashley Lawrence, Cesar Vazquez, Marvin Lamothe</H3>
 
 
-    {% if user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    {% endif %}
+        <p>Welcome to the Tour De Restaurant system.</p>
+
+        <p>
+            Tour De Restaurant is a web-based restaurant inventory and order management system developed 
+            as a group project for the Fall 2026 semester of SDEV265. The application demonstrates how 
+            restaurant operations can be managed through a single system by combining inventory management, 
+            order placement, and kitchen order fulfillment.
+        </p>
+
+        <p>
+            This system was built using Django, Python, HTML, CSS, JavaScript, and SQLite. Menu items are 
+            connected to the ingredients used in their preparation, allowing inventory quantities to be 
+            automatically updated when orders are placed. Staff members can securely log in to view inventory, 
+            adjust inventory quantities, enter new orders, and manage kitchen orders efficiently.
+        </p>
+
+        <p>
+            Navigate the system using the navigation bar in the top-left corner of the page. Clicking "Order" 
+            will take you to the menu, where you can view available items and place an order once logged in. 
+            Staff members can also access inventory management and kitchen order fulfillment features from the 
+            navigation bar after logging in. Administrators have access to additional features through the Django 
+            admin interface, where they can manage users, ingredients, orders, menu items, and the ingredients 
+            associated with each menu item without modifying the application code.
+        </p>
+
+        <h2>Project Information</h2>
+
+        <p><strong>Course:</strong> SDEV265 - System Software Analysis and Projects</p>
+
+        <p>
+            <strong>Technologies:</strong>
+            Django, Python, HTML, CSS, JavaScript, and SQLite
+        </p>
+
+        <p>
+            <strong>Source Code:</strong>
+            <a href="https://github.com/mgvero-ivy/SDEV265-Group-Project---Team-Tour-De-Restaurant"
+            target="_blank">
+                View the project on GitHub
+            </a>
+        </p>
+
+    </div>
+
 
 </body>
 

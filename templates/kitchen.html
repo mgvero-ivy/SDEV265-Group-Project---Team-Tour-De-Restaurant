@@ -12,12 +12,17 @@
     <nav>
         <a href="/">Home</a>
         <a href="/order/">Order</a>
+
         {% if user.is_authenticated and user.is_staff %}
             <a href="/inventory/">Inventory</a>
             <a href="/kitchen/">Kitchen</a>
             <a href="/admin/">Admin</a>
-        {% endif %}
-        {% if not user.is_authenticated %}
+
+            <form class="nav-logout" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
             <a href="{% url 'login' %}">Staff Login</a>
         {% endif %}
     </nav>
@@ -50,11 +55,13 @@
 
     {% endfor %}
 
+    <!--
     {% if user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit">Logout</button>
         </form>
     {% endif %}
+    --> 
 </body>
 </html>
