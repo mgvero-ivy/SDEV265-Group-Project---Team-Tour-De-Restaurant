@@ -139,7 +139,9 @@ def place_order(request):
             return redirect("order_page")
 
     # Create one order for everything selected.
-    customer = request.user.customer
+    customer, created = Customer.objects.get_or_create(
+        user=request.user
+    )
     order = Order.objects.create(customer=customer)
 
     # Create an OrderItem for each selected menu item and calculates total

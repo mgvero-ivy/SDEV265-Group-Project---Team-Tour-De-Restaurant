@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 # Create your tests here.
 from decimal import Decimal
@@ -6,6 +7,7 @@ from decimal import Decimal
 from django.test import TestCase
 
 from .models import (
+    Customer,
     Ingredient,
     MenuItem,
     MenuItemIngredient,
@@ -122,13 +124,19 @@ class MenuItemIngredientTests(TestCase):
 
 class OrderTests(TestCase):
 
+    def setUp(self):
+        user = get_user_model().objects.create_user(
+            username="test_customer"
+        )
+        self.customer = Customer.objects.create(user=user)
+
     def test_order_is_created_as_incomplete(self):
-        order = Order.objects.create()
+        order = Order.objects.create(customer=self.customer)
 
         self.assertFalse(order.completed)
 
     def test_order_string_representation(self):
-        order = Order.objects.create()
+        order = Order.objects.create(customer=self.customer)
 
         self.assertEqual(
             str(order),
@@ -138,8 +146,14 @@ class OrderTests(TestCase):
 
 class OrderItemTests(TestCase):
 
+    def setUp(self):
+        user = get_user_model().objects.create_user(
+            username="test_customer"
+        )
+        self.customer = Customer.objects.create(user=user)
+
     def test_order_item_can_be_created(self):
-        order = Order.objects.create()
+        order = Order.objects.create(customer=self.customer)
 
         menu_item = MenuItem.objects.create(
             name="Cheeseburger",
@@ -157,7 +171,7 @@ class OrderItemTests(TestCase):
         self.assertEqual(order_item.quantity, 2)
 
     def test_order_item_default_quantity_is_one(self):
-        order = Order.objects.create()
+        order = Order.objects.create(customer=self.customer)
 
         menu_item = MenuItem.objects.create(
             name="French Fries"
@@ -171,7 +185,7 @@ class OrderItemTests(TestCase):
         self.assertEqual(order_item.quantity, 1)
 
     def test_order_item_string_representation(self):
-        order = Order.objects.create()
+        order = Order.objects.create(customer=self.customer)
 
         menu_item = MenuItem.objects.create(
             name="Cheeseburger"
