@@ -17,18 +17,20 @@
     <nav>
         <a href="/">Home</a>
         <a href="/order/">Order</a>
-
-        {% if user.is_authenticated and user.is_staff %}
-            <a href="/inventory/">Inventory</a>
-            <a href="/kitchen/">Kitchen</a>
-            <a href="/admin/">Admin</a>
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <a href="/inventory/">Inventory</a>
+                <a href="/kitchen/">Kitchen</a>
+                <a href="/admin/">Admin</a>
+            {% endif %}
 
             <form class="nav-logout" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit">Logout</button>
             </form>
         {% else %}
-            <a href="{% url 'login' %}">Staff Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">Login</a>
         {% endif %}
     </nav>
 
