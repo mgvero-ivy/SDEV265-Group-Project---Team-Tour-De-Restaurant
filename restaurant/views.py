@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Ingredient, MenuItem, MenuItemIngredient, Order, OrderItem
+from .models import Ingredient, MenuItem, MenuItemIngredient, Order, OrderItem, Customer
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import RegisterForm
 
 def staff_user(user):
     return user.is_staff
@@ -118,7 +119,7 @@ def place_order(request):
             if ingredient.id not in ingredient_totals:
                 ingredient_totals[ingredient.id] = {
                     "ingredient": ingredient,
-                    "amount_needed": 0
+                    "amount_needed": Decimal("0.00")
                 }
 
             ingredient_totals[ingredient.id]["amount_needed"] += amount_needed
@@ -138,7 +139,8 @@ def place_order(request):
             return redirect("order_page")
 
     # Create one order for everything selected.
-    order = Order.objects.create()
+    customer = request.user.customer
+    order = Order.objects.create(customer=customer)
 
     # Create an OrderItem for each selected menu item and calculates total
     # Also calculate the order total and build a summary.
@@ -240,3 +242,19 @@ def add_new_ingredient(request):
             )
 
     return redirect("inventory")
+
+def register(request):
+    """To create new user as customer"""
+
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Customer.objects.create(user=user)
+            messages.success(request, "Your account has been created. Please log in to place an order.")
+            return redirect("login")
+
+    else:
+        form = RegisterForm()
+
+    return render(request, "register.html", {"form": form})

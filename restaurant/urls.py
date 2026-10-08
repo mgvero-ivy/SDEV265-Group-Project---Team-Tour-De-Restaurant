@@ -26,5 +26,6 @@ urlpatterns = [
         views.complete_order,
         name="complete_order"
     ),
+    path("register/", views.register, name="register"),
 
 ]

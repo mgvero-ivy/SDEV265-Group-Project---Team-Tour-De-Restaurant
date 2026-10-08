@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.conf import settings
 
 class Ingredient(models.Model):
     """
@@ -119,6 +120,15 @@ class MenuItemIngredient(models.Model):
         """
         return f"{self.menu_item} - {self.ingredient}"
 
+class Customer(models.Model):
+    """
+    Needed for when a new user registers, they are automatically made to be a customer.
+    """
+
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Customer: {self.user.username}"
 
 class Order(models.Model):
     """
@@ -127,7 +137,8 @@ class Order(models.Model):
     Each order stores the date and time it was created and whether
     the order has been completed.
     """
-
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    
     # Automatically records the date and time when the order is first created.
     # auto_now_add=True means this value is set once and then stays unchanged.
     created_at = models.DateTimeField(auto_now_add=True)

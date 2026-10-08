@@ -20,7 +20,7 @@ This project is built using:
 ## Features
 
 ### Staff & Management
-- Log in as staff to view current ingredient inventory levels.
+- Log in as staff to view/add ingredient inventory levels.
 - Track stock quantities to know when ingredients need to be restocked.
 - Access staff-only views restricted by user permissions.
 
@@ -29,6 +29,10 @@ This project is built using:
 - Simple, straightforward interface for selecting items and checking out.
 
 ## Setup & How to Run
+
+### To go to live website visit: https://markogvero.pythonanywhere.com/
+
+### To run program locally:
 
 1. **Clone the repository:**
 ```bash
@@ -61,9 +65,9 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-6. **Log in with test credentials:**
-    - **Username:** admin
-    - **Password:** Password1234
+6. **Log in or Register:**
+    - **Staff/Admin Login:** Username: "admin", Password: "Password1234"
+    - **Customer:** Click **Register** on the navigation bar to create a new account, then log in.
 
 7. **Start the development server:**
 ```bash
