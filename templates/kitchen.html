@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order</title>
+    <title>Kitchen Orders</title>
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -32,6 +32,7 @@
     <h1>Kitchen Orders</h1>
 
     {% for order in open_orders %}
+    <div class="kitchen-order">
 
         <h2>Order {{ order.id }}</h2>
 
@@ -46,10 +47,13 @@
             {% endfor %}
         </ul>
 
-        <form method="post" action="{% url 'complete_order' order.id %}">
-            {% csrf_token %}
-            <button type="submit">Mark Fulfilled</button>
-        </form>
+            <form method="post" action="{% url 'complete_order' order.id %}">
+                {% csrf_token %}
+                <button type="submit">Mark Fulfilled</button>
+            </form>
+
+    </div>
+
 
     {% empty %}
 

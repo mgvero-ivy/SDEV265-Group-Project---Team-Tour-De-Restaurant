@@ -9,9 +9,6 @@
 </head>
 <body>
 
-    <nav>
-        <a href="/">Home</a>
-        <a href="/order/">Order</a>
 
     <nav>
         <a href="/">Home</a>
@@ -37,7 +34,7 @@
     <h1>Current Inventory</h1>
 
     {% for ingredient in ingredients %}
-        <p>
+        <div class="inventory-item">
             {{ ingredient.name }}:
             {{ ingredient.quantity }} {{ ingredient.unit }}
 
@@ -51,8 +48,8 @@
                 {% csrf_token %}
                 <input type="number" name="quantity" placeholder="Add quantity" step="any" required>
                 <button type="submit">Add to Inventory</button>
-            </form>
-        </p>
+                    </form>
+        </div>
     {% empty %}
         <p>No ingredients are currently in inventory.</p>
     {% endfor %}
